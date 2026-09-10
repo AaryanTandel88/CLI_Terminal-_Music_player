@@ -8,29 +8,66 @@ const songs = [
     "Heat Waves - Glass Animals"
 ];
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
+let selectedSong = 0;
 
-console.log("\n🎵 MY MUSIC PLAYER 🎵");
-console.log("----------------------");
+readline.emitKeypressEvents(process.stdin);
+process.stdin.setRawMode(true);
 
-console.log("\nAvailable Songs:");
+function displaySongs() {
+    console.clear();
 
-songs.forEach((song, index) => {
-    console.log(`${index + 1}. ${song}`);
-});
+    console.log("🎵 MY MUSIC PLAYER 🎵");
+    console.log("----------------------");
+    console.log("Use ↑ ↓ to move and ENTER to select\n");
 
-rl.question("\nEnter the song number you want to play: ", (input) => {
+    for (let i = 0; i < songs.length; i++) {
 
-    const songNumber = Number(input);
+        if (i === selectedSong) {
+            console.log("👉 " + songs[i]);
+        } else {
+            console.log("   " + songs[i]);
+        }
+    }
+}
 
-    if (songNumber >= 1 && songNumber <= songs.length) {
-        console.log(`\n▶️ Now Playing: ${songs[songNumber - 1]}`);
-    } else {
-        console.log("\n❌ Invalid song number!");
+displaySongs();
+
+process.stdin.on("keypress", (key, data) => {
+
+    if (data.name === "up") {
+
+        if (selectedSong > 0) {
+            selectedSong--;
+        }
+
+        displaySongs();
     }
 
-    rl.close();
+    else if (data.name === "down") {
+
+        if (selectedSong < songs.length - 1) {
+            selectedSong++;
+        }
+
+        displaySongs();
+    }
+
+    else if (data.name === "return") {
+
+        console.clear();
+
+        console.log("🎵 MY MUSIC PLAYER 🎵");
+        console.log("----------------------");
+
+        console.log("\n▶️ Now Playing:");
+        console.log(songs[selectedSong]);
+
+        process.stdin.setRawMode(false);
+        process.stdin.pause();
+    }
+
+    else if (data.name === "c" && data.ctrl) {
+        process.stdin.setRawMode(false);
+        process.stdin.pause();
+    }
 });
